@@ -3,16 +3,14 @@ package ch.hearc.nde.pulsaryapi.service.impl;
 import ch.hearc.nde.pulsaryapi.UserRegistrationForm;
 import ch.hearc.nde.pulsaryapi.model.UserEntity;
 import ch.hearc.nde.pulsaryapi.repository.UserRepository;
-import ch.hearc.nde.pulsaryapi.service.FailedLoginException;
-import ch.hearc.nde.pulsaryapi.service.UnavailableUsernameException;
+import ch.hearc.nde.pulsaryapi.exceptions.FailedLoginException;
+import ch.hearc.nde.pulsaryapi.exceptions.UnavailableUsernameException;
 import ch.hearc.nde.pulsaryapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.StreamSupport;
 
 @Configuration
 public class UserServiceImpl implements UserService {

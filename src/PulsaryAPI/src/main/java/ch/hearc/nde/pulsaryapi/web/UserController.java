@@ -2,15 +2,13 @@ package ch.hearc.nde.pulsaryapi.web;
 
 import ch.hearc.nde.pulsaryapi.UserRegistrationForm;
 import ch.hearc.nde.pulsaryapi.model.UserEntity;
-import ch.hearc.nde.pulsaryapi.repository.UserRepository;
-import ch.hearc.nde.pulsaryapi.service.FailedLoginException;
-import ch.hearc.nde.pulsaryapi.service.UnavailableUsernameException;
+import ch.hearc.nde.pulsaryapi.exceptions.FailedLoginException;
+import ch.hearc.nde.pulsaryapi.exceptions.UnavailableUsernameException;
 import ch.hearc.nde.pulsaryapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
