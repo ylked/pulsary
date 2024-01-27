@@ -1,25 +1,26 @@
 package ch.hearc.nde.pulsaryapi.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.util.Date;
 
 @Entity
-public class User implements Serializable {
+public class UserEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column(unique = true)
     private String username;
+    @JsonIgnore
     private String passwordHash;
+    @Column(unique = true)
     private String token;
     private long created_at;
     private long updated_at;
 
-    public User(){
+    public UserEntity(){
     }
 
     public String getUsername() {
@@ -28,6 +29,18 @@ public class User implements Serializable {
 
     public String getPasswordHash() {
         return passwordHash;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public String getToken() {
@@ -40,5 +53,16 @@ public class User implements Serializable {
 
     public Long getId() {
         return id;
+    }
+
+    @PrePersist
+    private void onCreate(){
+        this.created_at = System.currentTimeMillis();
+        this.updated_at = System.currentTimeMillis();
+    }
+
+    @PreUpdate
+    private void onUpdate(){
+        this.updated_at = System.currentTimeMillis();
     }
 }
