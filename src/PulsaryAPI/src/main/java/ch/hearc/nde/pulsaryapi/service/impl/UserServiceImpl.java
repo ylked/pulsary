@@ -1,6 +1,7 @@
 package ch.hearc.nde.pulsaryapi.service.impl;
 
-import ch.hearc.nde.pulsaryapi.dto.UserRegistrationForm;
+import ch.hearc.nde.pulsaryapi.dto.User;
+import ch.hearc.nde.pulsaryapi.exceptions.MissingParametersException;
 import ch.hearc.nde.pulsaryapi.model.UserEntity;
 import ch.hearc.nde.pulsaryapi.repository.UserRepository;
 import ch.hearc.nde.pulsaryapi.exceptions.FailedLoginException;
@@ -23,16 +24,19 @@ public class UserServiceImpl implements UserService {
     private @Autowired TokenService tokenService;
 
     @Override
-    public UserEntity create(UserRegistrationForm form) throws UnavailableUsernameException {
+    public UserEntity create(User dto) throws UnavailableUsernameException, MissingParametersException {
+        if(dto.getUsername() == null || dto.getPassword() == null){
+            throw new MissingParametersException();
+        }
 
-        if(repo.findByUsername(form.getUsername()).isPresent()){
+        if(repo.findByUsername(dto.getUsername()).isPresent()){
             throw new UnavailableUsernameException();
         }
 
-        String hashedPassword = passwordService.hashPassword(form.getPlainPassword());
+        String hashedPassword = passwordService.hashPassword(dto.getPassword());
 
         UserEntity user = new UserEntity();
-        user.setUsername(form.getUsername());
+        user.setUsername(dto.getUsername());
         user.setPasswordHash(hashedPassword);
 
         repo.save(user);
@@ -41,10 +45,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity login(UserRegistrationForm form) throws FailedLoginException {
-        UserEntity user = repo.findByUsername(form.getUsername()).orElseThrow(FailedLoginException::new);
+    public UserEntity login(User dto) throws FailedLoginException, MissingParametersException {
+        if(dto.getUsername() == null || dto.getPassword() == null){
+            throw new MissingParametersException();
+        }
 
-        if(!passwordService.check(form.getPlainPassword(), user.getPasswordHash())){
+        UserEntity user = repo.findByUsername(dto.getUsername()).orElseThrow(FailedLoginException::new);
+
+        if(!passwordService.check(dto.getPassword(), user.getPasswordHash())){
             throw new FailedLoginException();
         }
 
@@ -64,5 +72,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public void logout() {
         currentUser().ifPresent(user -> tokenService.deleteToken(user.getToken()));
+    }
+
+    @Override
+    public void edit(User dto) throws UnavailableUsernameException, FailedLoginException {
+        UserEntity user = currentUser().orElseThrow(FailedLoginException::new);
+
+        if(dto.getUsername() != null){
+            if(repo.findByUsername(dto.getUsername()).isPresent()){
+                throw new UnavailableUsernameException();
+            }
+            user.setUsername(dto.getUsername());
+        }
+
+        if(dto.getPassword() != null){
+            user.setPasswordHash(passwordService.hashPassword(dto.getPassword()));
+        }
+
+        repo.save(user);
+    }
+
+    @Override
+    public void delete() throws FailedLoginException{
+        UserEntity user = currentUser().orElseThrow(FailedLoginException::new);
+
+        repo.delete(user);
     }
 }
