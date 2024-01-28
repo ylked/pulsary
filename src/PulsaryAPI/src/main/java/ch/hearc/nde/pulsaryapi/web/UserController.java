@@ -18,7 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class UserController {
     private @Autowired UserService service;
 
-    @PostMapping("/users")
+    @PostMapping("/register")
     public @ResponseBody ResponseEntity<UserEntity> create_user(@RequestBody UserRegistrationForm form) {
         try {
             UserEntity user = service.create(form);
@@ -47,5 +47,11 @@ public class UserController {
                     .status(HttpStatus.UNAUTHORIZED).build();
 
         }
+    }
+
+    @PostMapping("/logout")
+    public @ResponseBody ResponseEntity<UserEntity> logout() {
+        service.logout();
+        return ResponseEntity.ok().build();
     }
 }

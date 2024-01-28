@@ -5,20 +5,22 @@ import ch.hearc.nde.pulsaryapi.model.UserEntity;
 import ch.hearc.nde.pulsaryapi.repository.UserRepository;
 import ch.hearc.nde.pulsaryapi.exceptions.FailedLoginException;
 import ch.hearc.nde.pulsaryapi.exceptions.UnavailableUsernameException;
+import ch.hearc.nde.pulsaryapi.service.PasswordService;
+import ch.hearc.nde.pulsaryapi.service.TokenService;
 import ch.hearc.nde.pulsaryapi.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.UUID;
+import java.util.Optional;
 
-@Configuration
+@Service
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private UserRepository repo;
+    private @Autowired PasswordService passwordService;
+    private @Autowired UserRepository repo;
+    private @Autowired TokenService tokenService;
 
     @Override
     public UserEntity create(UserRegistrationForm form) throws UnavailableUsernameException {
@@ -27,7 +29,7 @@ public class UserServiceImpl implements UserService {
             throw new UnavailableUsernameException();
         }
 
-        String hashedPassword = passwordEncoder.encode(form.getPlainPassword());
+        String hashedPassword = passwordService.hashPassword(form.getPlainPassword());
 
         UserEntity user = new UserEntity();
         user.setUsername(form.getUsername());
@@ -42,17 +44,25 @@ public class UserServiceImpl implements UserService {
     public UserEntity login(UserRegistrationForm form) throws FailedLoginException {
         UserEntity user = repo.findByUsername(form.getUsername()).orElseThrow(FailedLoginException::new);
 
-        if(!passwordEncoder.matches(form.getPlainPassword(), user.getPasswordHash())){
+        if(!passwordService.check(form.getPlainPassword(), user.getPasswordHash())){
             throw new FailedLoginException();
         }
 
-        // generate a random api token for the user
-        // UUID guarantees uniqueness
-        String token = UUID.randomUUID().toString();
-
-        user.setToken(token);
-        repo.save(user);
-
+        tokenService.generateNewToken(user);
         return user;
+    }
+
+    @Override
+    public Optional<UserEntity> currentUser() {
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpServletRequest request = attr.getRequest();
+        UserEntity user = (UserEntity) request.getAttribute("user");
+
+        return user == null ? Optional.empty() : Optional.of(user);
+    }
+
+    @Override
+    public void logout() {
+        currentUser().ifPresent(user -> tokenService.deleteToken(user.getToken()));
     }
 }
