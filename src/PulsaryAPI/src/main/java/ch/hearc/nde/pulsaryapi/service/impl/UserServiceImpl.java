@@ -1,6 +1,6 @@
 package ch.hearc.nde.pulsaryapi.service.impl;
 
-import ch.hearc.nde.pulsaryapi.UserRegistrationForm;
+import ch.hearc.nde.pulsaryapi.dto.UserRegistrationForm;
 import ch.hearc.nde.pulsaryapi.model.UserEntity;
 import ch.hearc.nde.pulsaryapi.repository.UserRepository;
 import ch.hearc.nde.pulsaryapi.exceptions.FailedLoginException;

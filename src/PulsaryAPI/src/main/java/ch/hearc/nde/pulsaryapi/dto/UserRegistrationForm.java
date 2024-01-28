@@ -1,4 +1,4 @@
-package ch.hearc.nde.pulsaryapi;
+package ch.hearc.nde.pulsaryapi.dto;
 
 public class UserRegistrationForm {
     private String username;

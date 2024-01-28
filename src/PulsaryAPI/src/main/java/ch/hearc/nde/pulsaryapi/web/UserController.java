@@ -1,6 +1,6 @@
 package ch.hearc.nde.pulsaryapi.web;
 
-import ch.hearc.nde.pulsaryapi.UserRegistrationForm;
+import ch.hearc.nde.pulsaryapi.dto.UserRegistrationForm;
 import ch.hearc.nde.pulsaryapi.model.UserEntity;
 import ch.hearc.nde.pulsaryapi.exceptions.FailedLoginException;
 import ch.hearc.nde.pulsaryapi.exceptions.UnavailableUsernameException;
