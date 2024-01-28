@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 public class UserEntity implements Serializable {
@@ -17,8 +18,8 @@ public class UserEntity implements Serializable {
     private String passwordHash;
     @Column(unique = true)
     private String token;
-    private long created_at;
-    private long updated_at;
+    private LocalDateTime created_at;
+    private LocalDateTime updated_at;
 
     public UserEntity(){
     }
@@ -57,12 +58,12 @@ public class UserEntity implements Serializable {
 
     @PrePersist
     private void onCreate(){
-        this.created_at = System.currentTimeMillis();
-        this.updated_at = System.currentTimeMillis();
+        this.created_at = LocalDateTime.now();
+        this.updated_at = LocalDateTime.now();
     }
 
     @PreUpdate
     private void onUpdate(){
-        this.updated_at = System.currentTimeMillis();
+        this.updated_at = LocalDateTime.now();
     }
 }
