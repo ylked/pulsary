@@ -19,6 +19,6 @@ public interface UserService {
 
     void delete() throws FailedLoginException;
 
-    Optional<UserEntity> currentUser();
+    UserEntity currentUser();
 
 }

@@ -61,22 +61,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserEntity> currentUser() {
+    public UserEntity currentUser() {
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = attr.getRequest();
         UserEntity user = (UserEntity) request.getAttribute("user");
 
-        return user == null ? Optional.empty() : Optional.of(user);
+        if(user == null){
+            throw new RuntimeException("No user logged in but filter did not refuse access");
+        }
+
+        return user;
     }
 
     @Override
     public void logout() {
-        currentUser().ifPresent(user -> tokenService.deleteToken(user.getToken()));
+        tokenService.deleteToken(currentUser().getToken());
     }
 
     @Override
-    public void edit(User dto) throws UnavailableUsernameException, FailedLoginException {
-        UserEntity user = currentUser().orElseThrow(FailedLoginException::new);
+    public void edit(User dto) throws UnavailableUsernameException {
+        UserEntity user = currentUser();
 
         if(dto.getUsername() != null){
             if(repo.findByUsername(dto.getUsername()).isPresent()){
@@ -93,8 +97,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete() throws FailedLoginException{
-        UserEntity user = currentUser().orElseThrow(FailedLoginException::new);
+    public void delete() {
+        UserEntity user = currentUser();
 
         repo.delete(user);
     }

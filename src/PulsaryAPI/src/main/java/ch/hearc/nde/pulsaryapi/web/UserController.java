@@ -88,7 +88,7 @@ public class UserController {
     }
 
     @DeleteMapping("/users")
-    public @ResponseBody ResponseEntity<?> delete(@RequestBody User dto) {
+    public @ResponseBody ResponseEntity<?> delete() {
         try {
             service.delete();
             return ResponseEntity.noContent().build();
