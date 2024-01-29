@@ -1,0 +1,190 @@
+\documentclass[
+  french,
+  a4paper,
+]{scrartcl}
+
+\usepackage[pages=some]{background}
+%\ULCornerWallPaper{1}{arc-template.pdf}
+\backgroundsetup{firstpage = true, scale = 1, angle = 0, opacity = 1, contents = {\includegraphics[width = \paperwidth, height = \paperheight] {arc-template.pdf}}}
+
+\usepackage{listings}
+
+\usepackage{xcolor}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.98,0.98,0.98}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\usepackage{amsmath,amssymb}
+\usepackage[french]{babel}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{lmodern}
+
+\usepackage{xcolor}
+\usepackage[margin=2cm,includehead,includefoot]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{etoolbox}
+
+\renewcommand{\arraystretch}{1.2}
+\setlength {\parindent}{0em}
+\setlength {\parskip}{1em}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\title{Pulsary}
+\subject{3291.2 JEE/Spring I \(\cdot\) ISC3il-a \( \cdot \) 2023-2024}
+\author{Nima Dekhli\\
+    \small \href{mailto:nima.dekhli@he-arc.ch}{nima.dekhli@he-arc.ch}}
+\date{\today}
+
+
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\section{Introduction}
+
+Pulsary est une API REST qui permet à ses utilisateurs de déterminer 
+leur temps de travail. Elle est destinée aux étudiants, aux travailleurs 
+indépendants, aux petites entreprises et aux particuliers. Chaque utilisateur 
+a la possibilité de créer un compte et de gérer ses chronomètres et ses projets.
+
+Pour chaque tâche qu'il effectue, l'utilisateur peut créer un chronomètre 
+qui démarre automatiquement. Une fois la tâche terminée, l'utilisateur 
+peut arrêter le chronomètre. Chaque chronomètre peut être associé à un projet, 
+ce qui permet de mieux organiser les tâches.
+
+L'API est entièrement réalisée en Java avec le framework Spring. 
+Elle utilise une base de données MySQL installée sur Docker pour stocker les données.
+
+
+\section{Implémentation}
+
+\subsection{Gestion des utilisateurs}
+
+L'application permet la gestion des comptes utilisateurs. 
+Chacun peut créer un compte à l'aide d'un nom d'utilisateur et d'un mot de passe. 
+Ensuite, il peut se connecter à l'application avec les mêmes informations et 
+il obtient une clé d'API. Cette clé est utilisée pour authentifier l'utilisateur
+à chaque requête. La clé n'expire pas et est unique pour chaque utilisateur. 
+Il est possible de supprimer la clé en se déconnectant. 
+Il est possible de changer le nom d'utilisateur et le mot de passe. 
+
+La gestion des accès se fait à l'aide d'un filtre qui vérifie la présence  
+et la validité de la clé d'API dans chaque requête (sauf pour l'enregistrement 
+du compte et la connexion). Si la clé est invalide, l'utilisateur reçoit une
+réponse avec le code d'erreur 401. Si la clé est valide, l'utilisateur est
+autorisé à accéder à la ressource demandée, et l'entité utilisateur correspondante 
+est ajoutée en temps que variable de requête. Ceci permet d'accéder à l'utilisateur
+connecté dans les services. 
+
+\subsection{Gestion des chronomètres}
+
+Les utilisateurs peuvent créer des chronomètres, qui sont automatiquement démarrés 
+au moment de leur création. Une fois le travail terminé, l'utilisateur peut arrêter 
+le chronomètre. 
+Chaque chronomètre possède un nom, une date de début et de fin et un utilisateur. 
+De manière optionnelle, il peut avoir un projet qui y est rattaché. 
+
+\subsection{Gestion des projets}
+
+Les utilisateurs peuvent créer des projets qui permettent de regrouper des chronomètres.
+Chaque projet possède un nom, une description et un utilisateur. Un projet 
+possède également une liste de chronomètres. 
+
+\subsection{Architecture}
+
+L'application utilise une architecture selon trois couches principales : 
+
+\begin{itemize}
+    \item La couche Contrôleurs qui permet de répondre aux requêtes
+    \item La couche Services qui permet de gérer la logique métier
+    \item La couche Données qui permet de gérer les accès à la base de données
+\end{itemize}
+
+La règle principale qui est toujours respectée est que chaque couche ne peut
+jamais accéder à une couche supérieure. Ceci permet de garantir une bonne
+séparation des responsabilités et une bonne modularité.
+
+\subsection{Tests unitaires}
+
+L'application contient des tests unitaires pour toutes les méthodes 
+publiques des services et des contrôleurs. Les tests sont réalisés
+à l'aide de JUnit 5 et de MockMVC. 
+
+
+\section{Discussion}
+
+\subsection{Problèmes rencontrés}
+
+La gestion des utilisateurs a été plutôt complexe à mettre en place. 
+Il a fallu trouver un moyen de gérer les accès aux ressources de manière 
+sécurisée et sans utiliser les sessions, qui n'existent pas dans une API REST. 
+La solution a été de permettre aux utilisateurs de générer une clé d'API
+sur un endpoint spécifique. Cette clé est ensuite utilisée pour authentifier
+l'utilisateur à chaque requête. 
+
+
+\subsection{Cahier des charges et planification}
+
+Les fonctionnalités décrites dans le cahier des charges n'ont pas 
+toutes été implémentées. La gestion des utilisateurs, des chronomètres 
+et des projets a été implémentée dans une version simple. Toutefois, 
+Il n'y a pas de possibilité d'entrer des données de facturation, 
+de récupérer des statistiques ou d'effectuer des opérations de filtrage. 
+
+La planification de ce projet n'a pas été respectée. Alors que selon 
+le cahier des charges, le projet aurait dû être développé de manière 
+continue tout au long du semestre, il a dans la très grande majorité 
+été développé en deux jours. Ceci a inévitablement eu un impact sur
+la qualité du code et sur la quantité de fonctionnalités implémentées.
+
+\section{Conclusion}
+
+
+En résumé, Pulsary est une application performante qui répond 
+aux besoins essentiels de gestion du temps pour divers utilisateurs. 
+Elle se concentre sur la gestion efficace des chronomètres, des projets, 
+et des comptes utilisateurs, avec une authentification sécurisée via une 
+clé d'API unique. Bien que certaines fonctionnalités prévues n'aient pas 
+été implémentées et que des défis aient été rencontrés, notamment en raison 
+d'une planification compressée, Pulsary demeure un outil utile pour le suivi 
+du temps de travail. Ce projet souligne l'importance d'une planification 
+adéquate et met en évidence les possibilités d'évolution future pour 
+enrichir ses fonctionnalités et sa portée.
+
+
+\end{document}

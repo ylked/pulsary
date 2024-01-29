@@ -1,3 +1,17 @@
 .DS_Store
 
 doc/cdc/3291-2-cdc.pdf
+
+doc/report/report.fdb_latexmk
+
+doc/report/report.log
+
+doc/report/report.out
+
+doc/report/report.pdf
+
+doc/report/report.toc
+
+doc/report/report.aux
+
+doc/report/report.fls
