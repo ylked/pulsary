@@ -38,6 +38,8 @@ public class ChronoController {
             return ResponseEntity.ok(chrono);
         } catch (MissingParametersException e) {
             return ResponseEntity.badRequest().build();
+        } catch (NotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 

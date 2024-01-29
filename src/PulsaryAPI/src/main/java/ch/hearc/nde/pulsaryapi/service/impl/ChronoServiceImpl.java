@@ -1,6 +1,7 @@
 package ch.hearc.nde.pulsaryapi.service.impl;
 
 import ch.hearc.nde.pulsaryapi.dto.Chrono;
+import ch.hearc.nde.pulsaryapi.dto.Project;
 import ch.hearc.nde.pulsaryapi.exceptions.IncoherentDatesException;
 import ch.hearc.nde.pulsaryapi.exceptions.InvalidOperationException;
 import ch.hearc.nde.pulsaryapi.exceptions.MissingParametersException;
@@ -8,6 +9,7 @@ import ch.hearc.nde.pulsaryapi.exceptions.NotFoundException;
 import ch.hearc.nde.pulsaryapi.model.ChronoEntity;
 import ch.hearc.nde.pulsaryapi.repository.ChronoRepository;
 import ch.hearc.nde.pulsaryapi.service.ChronoService;
+import ch.hearc.nde.pulsaryapi.service.ProjectService;
 import ch.hearc.nde.pulsaryapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.List;
 @Service
 public class ChronoServiceImpl implements ChronoService {
     private @Autowired ChronoRepository repo;
+    private @Autowired ProjectService projectService;
     private @Autowired UserService userService;
 
     @Override
@@ -26,7 +29,7 @@ public class ChronoServiceImpl implements ChronoService {
     }
 
     @Override
-    public ChronoEntity create(Chrono dto) throws MissingParametersException {
+    public ChronoEntity create(Chrono dto) throws MissingParametersException, NotFoundException {
         if (dto.getName() == null) {
             throw new MissingParametersException();
         }
@@ -36,6 +39,12 @@ public class ChronoServiceImpl implements ChronoService {
         chrono.setStart(LocalDateTime.now());
         chrono.setEnd(null);
         chrono.setUser(userService.currentUser());
+
+        if(dto.getProject() != null){
+            Project project = dto.getProject();
+            chrono.setProject(projectService.get(project.getId()));
+        }
+
         repo.save(chrono);
 
         return chrono;
@@ -99,6 +108,11 @@ public class ChronoServiceImpl implements ChronoService {
                 chrono.getEnd().isAfter(LocalDateTime.now()) || chrono.getStart().isAfter(LocalDateTime.now())))
         {
             throw new InvalidOperationException();
+        }
+
+        if(dto.getProject() != null){
+            Project project = dto.getProject();
+            chrono.setProject(projectService.get(project.getId()));
         }
 
         repo.save(chrono);

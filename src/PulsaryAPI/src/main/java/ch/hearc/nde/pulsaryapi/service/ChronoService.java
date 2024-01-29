@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface ChronoService {
     List<ChronoEntity> index();
-    ChronoEntity create(Chrono dto) throws MissingParametersException;
+    ChronoEntity create(Chrono dto) throws MissingParametersException, NotFoundException;
 
     ChronoEntity stop(long id) throws InvalidOperationException, NotFoundException;
     ChronoEntity get(long id) throws NotFoundException;

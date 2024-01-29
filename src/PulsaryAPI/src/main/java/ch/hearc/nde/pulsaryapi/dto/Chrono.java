@@ -7,6 +7,8 @@ public class Chrono {
     private LocalDateTime start;
     private LocalDateTime end;
 
+    private Project project;
+
     public String getName() {
         return name;
     }
@@ -29,5 +31,13 @@ public class Chrono {
 
     public void setEnd(LocalDateTime end) {
         this.end = end;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }

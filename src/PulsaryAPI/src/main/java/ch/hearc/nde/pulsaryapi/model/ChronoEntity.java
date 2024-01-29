@@ -21,6 +21,10 @@ public class ChronoEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
+    @ManyToOne
+    @JoinColumn(name = "project_id", nullable = true)
+    private ProjectEntity project;
+
     public void setId(long id) {
         this.id = id;
     }
@@ -31,6 +35,10 @@ public class ChronoEntity {
 
     public UserEntity getUser() {
         return user;
+    }
+
+    public ProjectEntity getProject() {
+        return project;
     }
 
     public void setStart(LocalDateTime start) {
@@ -91,5 +99,9 @@ public class ChronoEntity {
                 ", updated_at=" + updated_at +
                 ", user=" + user +
                 '}';
+    }
+
+    public void setProject(ProjectEntity project) {
+        this.project = project;
     }
 }
