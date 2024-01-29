@@ -21,7 +21,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Optional<UserEntity> getUsernameFromToken(String token) {
+    public Optional<UserEntity> getUserFromToken(String token) {
         return repo.findByToken(token);
     }
 

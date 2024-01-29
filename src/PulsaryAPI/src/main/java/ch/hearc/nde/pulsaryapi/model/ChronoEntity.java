@@ -79,4 +79,17 @@ public class ChronoEntity {
     public LocalDateTime getUpdated_at() {
         return updated_at;
     }
+
+    @Override
+    public String toString() {
+        return "ChronoEntity{" +
+                "id=" + id +
+                ", start=" + start +
+                ", end=" + end +
+                ", name='" + name + '\'' +
+                ", created_at=" + created_at +
+                ", updated_at=" + updated_at +
+                ", user=" + user +
+                '}';
+    }
 }

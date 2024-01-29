@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface TokenService {
     void generateNewToken(UserEntity user);
-    Optional<UserEntity> getUsernameFromToken(String token);
+    Optional<UserEntity> getUserFromToken(String token);
     void deleteToken(String token);
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 public class UserEntity implements Serializable {
@@ -20,6 +21,9 @@ public class UserEntity implements Serializable {
     private String token;
     private LocalDateTime created_at;
     private LocalDateTime updated_at;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChronoEntity> chronos;
 
     public UserEntity(){
     }

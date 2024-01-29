@@ -1,14 +1,12 @@
 package ch.hearc.nde.pulsaryapi.filter;
 
 import ch.hearc.nde.pulsaryapi.model.UserEntity;
-import ch.hearc.nde.pulsaryapi.repository.UserRepository;
 import ch.hearc.nde.pulsaryapi.service.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -62,7 +60,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        Optional<UserEntity> user = service.getUsernameFromToken(token);
+        Optional<UserEntity> user = service.getUserFromToken(token);
         if(user.isEmpty()){
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
